@@ -1,8 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 from .models import OrganizationCustomer, Customer, Organization, CustomUser
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
+from .models import CustomUser
 
 User = get_user_model()
 
@@ -69,4 +73,46 @@ class CompleteRegistrationAPIView(APIView):
 
         return Response({"message": "User fully registered"}, status=status.HTTP_201_CREATED)
 
+
+
+class LoginAPIView(APIView):
+    """Handles JWT login for CustomUser with organization validation"""
+
+    def post(self, request, org_uuid):
+        email = request.data.get("email")
+        password = request.data.get("password")
+
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            return Response({"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Validate user's association with the organization
+        organization = Organization.objects.filter(api_url__contains=org_uuid).first()
+        if not organization:
+            return Response({"error": "Invalid organization"}, status=status.HTTP_400_BAD_REQUEST)
+
+        customer = Customer.objects.filter(user=user, associated_organizations=organization).first()
+        if not customer:
+            return Response({"error": "User is not associated with this organization"}, status=status.HTTP_403_FORBIDDEN)
+
+        # Authenticate manually
+        if user.check_password(password):
+            refresh = RefreshToken.for_user(user)  # Generate JWT token
+            
+            return Response({
+                "message": "Login successful",
+                "access_token": str(refresh.access_token),
+                "refresh_token": str(refresh),
+                "user": {
+                    "username": user.username,
+                    "email": user.email,
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                    "kyc_verified": user.kyc_verified,
+                    "organization_name": organization.user.organization_name  # Ensure it's tied to the correct org
+                }
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
