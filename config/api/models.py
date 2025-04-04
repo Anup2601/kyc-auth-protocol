@@ -41,11 +41,13 @@ class CustomUser(AbstractUser):
 class Organization(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="organization_profile")
     api_url = models.URLField(blank=True, null=True)
+    official_domain = models.CharField(max_length=255, blank=True, null=True)
     customers = models.ManyToManyField("Customer", through="OrganizationCustomer", related_name="organizations_joined")
     
     def generate_api_url(self):
         import uuid
-        self.api_url = f"https://your-api.com/auth/{uuid.uuid4()}"
+        domain_part = "http://127.0.0.1:7878"
+        self.api_url = f"{domain_part}/auth/{uuid.uuid4()}"
         self.save()
 
     def __str__(self):
