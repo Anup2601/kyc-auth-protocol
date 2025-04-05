@@ -251,69 +251,7 @@
               </div>
             </div>
             
-            <!-- KYC Document Tab -->
-            <!-- <div v-if="activeTab === 'kyc'" class="tab-content">
-              <p class="document-instruction">Upload your KYC verification document</p>
-              
-              <div class="verification-options">
-                <div class="verification-option" @click="showKycFileUpload = true">
-                  <div class="option-icon">📁</div>
-                  <div class="option-title">Upload Document</div>
-                  <div class="option-description">Upload an image of your KYC document</div>
-                </div>
-                
-                <div class="verification-option" @click="openKycCamera">
-                  <div class="option-icon">📷</div>
-                  <div class="option-title">Scan with Camera</div>
-                  <div class="option-description">Use your camera to scan your document</div>
-                </div>
-              </div>
-              
-              File Upload Area (hidden by default)
-              <div v-if="showKycFileUpload" class="file-upload-area">
-                <input type="file" id="kycUpload" ref="kycFileInput" @change="handleKycFileUpload" accept="image/*" class="file-input">
-                <label for="kycUpload" class="file-input-label">
-                  <div v-if="!kycFile">
-                    <div class="upload-icon">📄</div>
-                    <div>Drag and drop your file here or</div>
-                    <button class="browse-btn">Browse files</button>
-                  </div>
-                  <div v-else class="uploaded-file">
-                    <div class="file-preview">
-                      <img v-if="kycFilePreview" :src="kycFilePreview" alt="KYC Preview" class="id-preview">
-                      <div v-else class="file-name">{{ kycFile.name }}</div>
-                    </div>
-                    <button class="remove-file" @click.prevent="removeKycFile">Remove</button>
-                  </div>
-                </label>
-              </div>
-              
-              Camera Capture (hidden by default)
-              <div v-if="showKycCamera" class="camera-capture">
-                <video ref="kycVideo" class="camera-video" autoplay></video>
-                <div class="camera-controls">
-                  <button class="camera-btn" @click="captureKycPhoto">Capture</button>
-                  <button class="camera-btn cancel" @click="closeKycCamera">Cancel</button>
-                </div>
-              </div>
-              
-              Captured Photo (hidden by default)
-              <div v-if="capturedKycImage" class="captured-image-container">
-                <img :src="capturedKycImage" alt="Captured KYC" class="captured-image">
-                <div class="camera-controls">
-                  <button class="camera-btn" @click="acceptKycImage">Accept</button>
-                  <button class="camera-btn cancel" @click="retakeKycPhoto">Retake</button>
-                </div>
-              </div>
-            </div>
             
-            <div class="verification-status">
-              <div class="status-icon">⚠️</div>
-              <div class="status-text">
-                <strong>KYC Verification Status: </strong>
-                <span class="pending">Pending</span>
-              </div>
-            </div> -->
             
             <div class="bottom-container">
               <button class="back-btn" @click="goToCompanyFormStep">
@@ -324,6 +262,18 @@
           </div>
         </transition>
       </div>
+      <!-- Success Message -->
+      <div v-if="currentStep === 'success'" class="step-container success .register-company-container">
+          <transition name="slide-fade">
+            <div class="success-message">
+              <div class="success-icon">✓</div>
+              <h1>Registration Successful!</h1>
+              <p>Your account has been created and is pending verification.</p>
+              <p>We'll notify you via email once your identity is verified.</p>
+              <button class="next-btn full-width" @click="goToDashboard">Go to  Dashboard</button>
+            </div>
+          </transition>
+        </div>
     </div>
   </template>
   
@@ -333,7 +283,7 @@
     name: 'RegisterCompany',
     data() {
       return {
-        currentStep: 'company-document-verification',
+        currentStep: 'company-form',
         
         // Company form fields
         orgName: '',
@@ -389,6 +339,9 @@
         } else if (this.accountType === 'company') {
           this.currentStep = 'company-form';
         }
+      },
+      goToDashboard() {
+        alert('Company Dashboard will be available soon!');
       },
       
       // Add new methods for company registration
@@ -1091,6 +1044,43 @@ input:not(:placeholder-shown) + label {
   transform: translateX(10px);
   opacity: 0;
 }
+/* Success message */
+.success-message {
+    padding: 30px 0;
+  }
+  
+  .success-icon {
+    width: 80px;
+    height: 80px;
+    background-color: #0f9d58;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    margin: 0 auto 20px;
+  }
+  
+  .full-width {
+    width: 100%;
+    margin-top: 30px;
+  }
+  
+  /* Bottom container */
+  .bottom-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+  }
+  
+  .sign-in-link {
+    color: #1a73e8;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+  }
 
 /* Responsive Design */
 @media (max-width: 600px) {

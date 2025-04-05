@@ -253,9 +253,8 @@
         if (this.accountType === 'user') {
           this.currentStep = 'user-form';
         } else {
-          // For company registration, we'll just show a notification for now
-          alert('Company registration will be available soon!');
-        }
+            this.$router.push('/registercompany');
+          }
       },
       goToSelectionStep() {
         this.currentStep = 'selection';
