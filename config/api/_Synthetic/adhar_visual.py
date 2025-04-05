@@ -21,7 +21,7 @@ if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 # Parameters
-num_records = 10  
+num_records = 2000  # Generate 2000 Aadhaar cards
 
 # Load resources
 logo_path = r'C:\Users\Priyesh Pandey\OneDrive\Desktop\kyc-auth-protocol\config\api\_Synthetic\Resources\ashok-stambh.png'
@@ -45,7 +45,7 @@ qr_code = Image.open(qr_code_path).convert("RGBA").resize((120, 120), Image.Resa
 # Font setup
 try:
     font = ImageFont.truetype("arial.ttf", 20)  
-    hindi_font = ImageFont.truetype("Nirmala.ttf", 20)  # Adjust to a Hindi-compatible font
+    hindi_font = ImageFont.truetype("Nirmala.ttf", 20)  
 except:
     font = ImageFont.load_default()
     hindi_font = font  
@@ -60,7 +60,6 @@ data = {
 }
 
 for i in range(num_records):
-    # Generate synthetic data
     aadhaar_num = generate_aadhaar_number()
     name = fake.name()
     dob = fake.date_of_birth(minimum_age=18, maximum_age=90).strftime("%d-%m-%Y")
@@ -80,28 +79,30 @@ for i in range(num_records):
     template.paste(logo, (10, 10), logo)
     template.paste(bharat_sarkar, (150, 5), bharat_sarkar)
 
-    # Add profile image (left side)
+    # Add profile image
     template.paste(face, (20, 80), face)
 
-    # Personal details (with Hindi text)
+    # Personal details (Hindi inclusion)
     draw.text((200, 40), f"{name}", fill="black", font=font)  
     draw.text((200, 70), f"जन्म तिथि: {dob}", fill="black", font=hindi_font)
     draw.text((200, 100), f"लिंग: {gender}", fill="black", font=hindi_font)
 
-    # Aadhaar number (prominent placement)
-    draw.text((200, 190), aadhaar_num, fill="black", font=ImageFont.truetype("arial.ttf", 30))  # Adjusted down
+    # Aadhaar number (aligned correctly)
+    draw.text((200, 190), aadhaar_num, fill="black", font=ImageFont.truetype("arial.ttf", 30))  
 
-
-    # QR Code (placed correctly and enlarged)
+    # QR Code placement
     template.paste(qr_code, (450, 110), qr_code)  
 
-    # Footer (correct bottom placement)
+    # Footer placement
     template.paste(footer, (0, template.height - footer.height), footer)
 
     # Save the image
     image_filename = f"{output_dir}/aadhaar_card_{i+1}.png"
     template.save(image_filename)
     data["Image File"].append(image_filename)
+
+    if i % 100 == 0:
+        print(f"Generated {i} Aadhaar images...")
 
 # Save data as CSV
 df = pd.DataFrame(data)
