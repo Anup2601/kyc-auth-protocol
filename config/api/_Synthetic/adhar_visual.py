@@ -21,7 +21,7 @@ if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 # Parameters
-num_records = 2000  # Generate 2000 Aadhaar cards
+num_records = 200  # Generate 200 Aadhaar cards
 
 # Load resources
 logo_path = r'C:\Users\Priyesh Pandey\OneDrive\Desktop\kyc-auth-protocol\config\api\_Synthetic\Resources\ashok-stambh.png'
