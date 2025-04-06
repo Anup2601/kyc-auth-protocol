@@ -105,7 +105,7 @@
                   >
                   <label for="confirmPassword">Confirm</label>
                   <button type="button" class="toggle-password" @click="showConfirmPassword = !showConfirmPassword">
-                    {{ showConfirmPassword ? '👁️' : '🙈' }}
+                    {{ showConfirmPassword ? '🙈' : '👁️' }}
                   </button>
                 </div>
               </div>
@@ -143,21 +143,18 @@
               
               <!-- File Upload Area (hidden by default) -->
               <div v-if="showFileUpload" class="file-upload-area">
-                <input type="file" id="idUpload" ref="fileInput" @change="handleFileUpload" accept="image/*" class="file-input">
-                <label for="idUpload" class="file-input-label">
-                  <div v-if="!uploadedFile">
-                    <div class="upload-icon">📄</div>
-                    <div>Drag and drop your file here or</div>
-                    <button class="browse-btn">Browse files</button>
-                  </div>
-                  <div v-else class="uploaded-file">
-                    <div class="file-preview">
-                      <img v-if="filePreview" :src="filePreview" alt="ID Preview" class="id-preview">
-                      <div v-else class="file-name">{{ uploadedFile.name }}</div>
-                    </div>
-                    <button class="remove-file" @click.prevent="removeFile">Remove</button>
-                  </div>
-                </label>
+                <input 
+                  type="file" 
+                  id="idUpload" 
+                  ref="fileInput" @change="handleFileUpload" accept="image/*" class="file-input"
+                  style="display: none;"
+                />
+
+                
+                <button type="button" class="browse-btn" @click="triggerFileSelect">Browse files</button>
+                <div v-if="filePreview">
+                 <img :src="filePreview" alt="Preview" class="id-preview" />
+                </div>
               </div>
               
               <!-- Camera Capture (hidden by default) -->
@@ -256,9 +253,8 @@
         if (this.accountType === 'user') {
           this.currentStep = 'user-form';
         } else {
-          // For company registration, we'll just show a notification for now
-          alert('Company registration will be available soon!');
-        }
+            this.$router.push('/registercompany');
+          }
       },
       goToSelectionStep() {
         this.currentStep = 'selection';
@@ -297,6 +293,9 @@
         }
         return true;
       },
+      triggerFileSelect() {
+        this.$refs.fileInput.click();
+     },
       handleFileUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -359,7 +358,7 @@
       },
       acceptImage() {
         this.isDocumentUploaded = true;
-        this.capturedImage = this.capturedImage; // Keep the captured image
+        this.capturedImage = this.capturedImage; 
       },
       completeRegistration() {
         if (!this.isDocumentUploaded) {
@@ -367,7 +366,7 @@
           return;
         }
         
-        // In a real app, you would submit the form to your backend
+        
         console.log('Registration data:', {
           accountType: this.accountType,
           firstName: this.firstName,
